@@ -1,69 +1,46 @@
 #include <iostream>
 #include <ctime>
-#include <cstdlib>
-
+#include "Shapes.h"
 #include "LinkedList.h"
-#include "Shape.h"
 
 using namespace std;
 
-int main()
-{
+int main() {
     srand(time(0));
+    LinkedList<Shape2D*> list_of_shapes;
 
-    LinkedList<Shape*> shapes;
+    // 1. Санамсаргүй 20-30 дүрс үүсгэх
+    int total = rand() % 11 + 20; 
+    for (int i = 0; i < total; i++) {
+        int choice = rand() % 3;
+        double v1 = (rand() % 100 + 1) / 10.0;
+        double v2 = (rand() % 100 + 1) / 10.0;
 
-    // Санамсаргүй 25 дүрс үүсгэх
-    for (int i = 0; i < 25; i++)
-    {
-        int type = rand() % 3;
-
-        if (type == 0)
-        {
-            double r = rand() % 20 + 1;
-            shapes.add(new Circle(r));
-        }
-        else if (type == 1)
-        {
-            double a = rand() % 20 + 1;
-            shapes.add(new Square(a));
-        }
-        else
-        {
-            double a = rand() % 20 + 1;
-            double h = rand() % 20 + 1;
-
-            shapes.add(new Triangle(a, h));
-        }
+        if (choice == 0) list_of_shapes.add(new Circle(v1));
+        else if (choice == 1) list_of_shapes.add(new Square(v1));
+        else list_of_shapes.add(new Triangle(v1, v2));
     }
 
-    // Талбайгаар эрэмбэлэх
-    for (int i = 0; i < shapes.length() - 1; i++)
-    {
-        for (int j = 0; j < shapes.length() - i - 1; j++)
-        {
-            Shape* s1 = shapes.get(j);
-            Shape* s2 = shapes.get(j + 1);
-
-            if (s1->area() > s2->area())
-            {
-                Shape* temp = s1;
-
-                shapes.remove(j);
-                shapes.insert(s2, j);
-
-                shapes.remove(j + 1);
-                shapes.insert(temp, j + 1);
+    // 2. Талбайгаар нь эрэмбэлэх (Bubble Sort)
+    for (int i = 0; i < list_of_shapes.length() - 1; i++) {
+        for (int j = 0; j < list_of_shapes.length() - i - 1; j++) {
+            if (list_of_shapes.get(j)->getArea() > list_of_shapes.get(j + 1)->getArea()) {
+                list_of_shapes.swap(j, j + 1);
             }
         }
     }
 
-    // Хэвлэх
-    cout << "===== SORTED SHAPES =====" << endl;
+    // 3. Үр дүнг хэвлэх
+    cout << "Sorted Shapes by Area (Total: " << list_of_shapes.length() << ")\n";
+    for (int i = 0; i < list_of_shapes.length(); i++) {
+        cout << i + 1 << ". ";
+        list_of_shapes.get(i)->print();
+        cout << endl;
+    }
 
-    for (int i = 0; i < shapes.length(); i++)
-    {
-        shapes.get(i)->print();
+    // 4. Санах ойг цэвэрлэх
+    for (int i = 0; i < list_of_shapes.length(); i++) {
+        delete list_of_shapes.get(i);
     }
 
     return 0;

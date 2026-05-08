@@ -1,131 +1,95 @@
 #ifndef LINKEDLIST_H
 #define LINKEDLIST_H
 
-template <class T>
-class LinkedList
-{
-private:
-    struct Node
-    {
-        T data;
-        Node* next;
-        Node(T d)
-        {
-            data = d;
-            next = NULL;
-        }
-    };
+template <typename T>
+struct Node {
+    T data;
+    Node* next;
+    Node(T t) : data(t), next(nullptr) {}
+};
 
-    Node* head;
-    int len;
+template <typename T>
+class LinkedList {
+private:
+    Node<T>* head;
+    int count;
 
 public:
-    LinkedList()
-    {
-        head = NULL;
-        len = 0;
-    }
+    LinkedList() : head(nullptr), count(0) {}
 
     // Сүүлд нэмэх
-    void add(T t)
-    {
-        Node* newNode = new Node(t);
-
-        if (head == NULL)
-        {
+    void add(T t) {
+        Node<T>* newNode = new Node<T>(t);
+        if (!head) {
             head = newNode;
-        }
-        else
-        {
-            Node* temp = head;
-
-            while (temp->next != NULL)
-            {
-                temp = temp->next;
-            }
-
+        } else {
+            Node<T>* temp = head;
+            while (temp->next) temp = temp->next;
             temp->next = newNode;
         }
-
-        len++;
+        count++;
     }
 
-    // index дээр оруулах
-    void insert(T t, int index)
-    {
-        if (index < 0 || index > len)
-            return;
-
-        Node* newNode = new Node(t);
-
-        if (index == 0)
-        {
+    // Индексээр оруулах
+    void insert(T t, int index) {
+        if (index < 0 || index > count) return;
+        Node<T>* newNode = new Node<T>(t);
+        if (index == 0) {
             newNode->next = head;
             head = newNode;
-        }
-        else
-        {
-            Node* temp = head;
-
-            for (int i = 0; i < index - 1; i++)
-            {
-                temp = temp->next;
-            }
-
+        } else {
+            Node<T>* temp = head;
+            for (int i = 0; i < index - 1; i++) temp = temp->next;
             newNode->next = temp->next;
             temp->next = newNode;
         }
-
-        len++;
+        count++;
     }
 
-    // Элемент авах
-    T get(int index)
-    {
-        Node* temp = head;
-
-        for (int i = 0; i < index; i++)
-        {
-            temp = temp->next;
-        }
-
+    // Утга авах
+    T get(int index) {
+        Node<T>* temp = head;
+        for (int i = 0; i < index; i++) temp = temp->next;
         return temp->data;
     }
 
     // Устгах
-    void remove(int index)
-    {
-        if (index < 0 || index >= len)
-            return;
-
-        Node* del;
-
-        if (index == 0)
-        {
-            del = head;
+    void remove(int index) {
+        if (index < 0 || index >= count) return;
+        Node<T>* temp = head;
+        if (index == 0) {
             head = head->next;
+            delete temp;
+        } else {
+            for (int i = 0; i < index - 1; i++) temp = temp->next;
+            Node<T>* toDelete = temp->next;
+            temp->next = toDelete->next;
+            delete toDelete;
         }
-        else
-        {
-            Node* temp = head;
-
-            for (int i = 0; i < index - 1; i++)
-            {
-                temp = temp->next;
-            }
-
-            del = temp->next;
-            temp->next = del->next;
-        }
-
-        delete del;
-        len--;
+        count--;
     }
 
-    // Урт
-    int length()
-    {
-        return len;
+    int length() { return count; }
+
+    // Жагсаалтын өгөгдлийг солих (Эрэмбэлэлтэд ашиглана)
+    void swap(int i, int j) {
+        if (i == j) return;
+        Node<T>* nodeI = head;
+        for (int k = 0; k < i; k++) nodeI = nodeI->next;
+        Node<T>* nodeJ = head;
+        for (int k = 0; k < j; k++) nodeJ = nodeJ->next;
+        
+        T temp = nodeI->data;
+        nodeI->data = nodeJ->data;
+        nodeJ->data = temp;
+    }
+
+    ~LinkedList() {
+        while (head) {
+            Node<T>* temp = head;
+            head = head->next;
+            delete temp;
+        }
     }
 };
 
